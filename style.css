@@ -20,6 +20,7 @@ body {
     gap: 10px;
     padding: 20px;
     overflow: scroll;
+    margin: auto;
 }
 
 .book-container {
@@ -55,3 +56,4 @@ body {
   font-weight: 400;
   font-size: 3em;
 }
+

@@ -11,6 +11,7 @@ function Book(title, author, pages, genre, read) {
     this.read = read;
 };
 
+
 function getBook() {
     let book = new Book('The Hobbit', 'J.R.R. Tolkein', '310', 'Fantasy', false)
     addToLibrary(book);
@@ -70,7 +71,9 @@ let scrollLeft;
 
 slider.addEventListener('mousedown', (e) => {
 isDown = true;
-xStart = e.screenX
+xStart = e.pageX - slider.offsetLeft;
+scrollLeft = slider.scrollLeft;
+console.log(xStart);
 });
 
 slider.addEventListener('mouseleave', () => {
@@ -81,14 +84,14 @@ slider.addEventListener('mouseup', () => {
     isDown = false;
 });
 
-slider.addEventListener('mousemove', (e) => {
-    e.preventDefault();
+slider.addEventListener('mousemove', (e) => {  
     if(!isDown) return;
-    else {
-        
-        console.log(xStart);
-    }
-})
+    e.preventDefault();
+    
+    const x = e.pageX - slider.offsetLeft;
+    const move = (x - xStart) * 1.2;
+    slider.scrollLeft = scrollLeft - move;
+});
 
 
 
