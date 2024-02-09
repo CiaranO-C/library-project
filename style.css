@@ -3,57 +3,86 @@
 *::after {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
     font-family: "Alata", sans-serif;
 }
 
-.slide-container{
-    width: 50%;
-    background-color: darkgray;
 
-    display: grid;
-    grid-template-columns: auto;
-    grid-auto-flow: column;
-    gap: 10px;
-    padding: 20px;
-    overflow: scroll;
-    margin: auto;
-}
 
 .book-container {
-    height: 360px;
-    width: 300px;
-    background-color: rgb(223, 240, 255);
-    border: 2px solid lightgray;
-    border-radius: 20px;
-    padding: 15px;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(67, 157, 241, 0);
 
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 50px;
+   
+}
+
+.book-cover {
+    box-shadow: -8.5px 0px 0px 0px rgba(104,80,0,1);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px; 
+}
+
+.book-cover, .book-card{
+    background-color: #75561c;
+    border: 2px solid #685000;
+    height: 280px;
+    width: 180px;
+    padding: 15px;
+}
+
+.book-card {
+    background-color: #75561c;
+    color: gold;
+       
+    box-shadow: -6px 0px 0px 0px rgba(104,80,0,1);
+
+position: relative;
     display: grid;
     grid-template-rows: 2fr auto 1fr auto 1fr auto;
     justify-items: center;
     align-items: center;
 }
 
-.book-container:hover{
-    cursor: grab;
+.page {
+    height: 314px;
+    width: 214px;
+    background-color: #fffcdb;
+    border: 0.2px solid #cfca9a;
+    border-left: 5px solid #685000;
+    /*box-shadow: inset 6px -6px 0px 0px rgba(104,80,0,1);*/
+    /* border-image: linear-gradient(to right, #685000 2.5%, #e2ddaa 4%) 1; */
+    box-shadow: -6px 0px 0px 0px rgba(104,80,0,1);
 }
 
-.book-container:active {
-    cursor: grabbing;
+.book-card, .page {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px; 
+    
 }
 
 .line {
     width: 100%;
     height: 1px;
-    background-color: lightgray;
-}
+    background: rgb(117,86,28);
+    background: linear-gradient(90deg, rgba(117,86,28,1) 0%, rgba(236,213,19,1) 50%, rgba(117,86,28,1) 100%);}
 
-.book-container h3 {
+.bookCard h3 {
     font-family: inherit;
   font-weight: 400;
   font-size: 3em;
 }
 
+span {
+    font-weight: 400;
+}
