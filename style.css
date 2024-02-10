@@ -47,6 +47,8 @@ h1 {
     row-gap: 40px;
     padding: 50px;
     border-radius: 15px;
+
+   
     
 }
 
@@ -128,7 +130,9 @@ footer {
     justify-items: center;
     box-shadow: 10px 10px 0px 4px rgba(91,98,235,1);
 }
-
+.book-card:hover {
+    background-color: red;
+}
 
 .line {
     width: 100%;

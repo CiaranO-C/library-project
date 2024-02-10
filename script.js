@@ -21,6 +21,7 @@ submitButton.addEventListener('click', (e) => {
     console.log(`book = ${book}`);
 
     addToLibrary(book);
+    form.reset();
 })
 
 toggle.addEventListener('click', () => {
@@ -43,8 +44,7 @@ toggle.addEventListener('click', () => {
 });
 
 inputs.forEach((input) => {
-
-    input.addEventListener('click', () => {
+    input.addEventListener('focus', () => {
         const label = document.querySelector(`.${input.id}`);
         label.style.bottom = '20px';
     })
