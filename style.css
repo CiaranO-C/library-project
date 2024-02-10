@@ -152,7 +152,7 @@ footer {
     text-shadow: 1.2px 0.5px 0px rgba(1, 1, 1, 1);
 }
 
-.author {
+.book-card .author {
     margin-top: 6px;
     margin-bottom: 6px;
 }

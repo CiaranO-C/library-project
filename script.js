@@ -10,15 +10,17 @@ const readText = document.querySelector('.read-text');
 const submitButton = document.querySelector('.add');
 
 
-submitButton.addEventListener('click', (e)=>{
+submitButton.addEventListener('click', (e) => {
     e.preventDefault();
     const form = document.querySelector('#book-form');
-    
+
     const formData = new FormData(form);
-    const values = [...formData.entries()];
-    console.log(values);
-    console.log('poo');
-    console.log(formData);
+
+    const bookValues = Array.from(formData.values());
+    const book = new Book(...bookValues);
+    console.log(`book = ${book}`);
+
+    addToLibrary(book);
 })
 
 toggle.addEventListener('click', () => {
@@ -43,23 +45,23 @@ toggle.addEventListener('click', () => {
 inputs.forEach((input) => {
 
     input.addEventListener('click', () => {
-        const label = document.querySelector(`[for=${input.id}]`);
+        const label = document.querySelector(`.${input.id}`);
         label.style.bottom = '20px';
     })
 
     input.addEventListener('blur', () => {
-        const label = document.querySelector(`[for=${input.id}]`);
-        label.style.bottom = '0px';
+        const label = document.querySelector(`.${input.id}`);
+        if (!input.value) return label.style.bottom = '0px';
     })
 })
 
 
-function Book(title, author, pages, genre, read) {
+function Book(title, author, genre, pages, read) {
     this.title = title;
     this.author = author;
-    this.pages = pages;
     this.genre = genre;
-    this.read = read;
+    this.pages = pages;
+    (read) ? this.read = read : this.read = false;
 
     switch (genre) {
         case 'drama':
@@ -90,25 +92,25 @@ function Book(title, author, pages, genre, read) {
 
 
 function getBook() {
-    let book = new Book('The Two Towers', 'J.R.R. Tolkein', 310, 'fantasy', false)
+    let book = new Book('The Two Towers', 'J.R.R. Tolkein', 'fantasy', 310, false)
     addToLibrary(book);
 
-    let book1 = new Book('A Brave New World', 'Aldous Huxley', '200', 'sci-fi', false)
+    let book1 = new Book('A Brave New World', 'Aldous Huxley', 'sci-fi', 200, false)
     addToLibrary(book1);
 
-    let book2 = new Book('1984', 'George Orwell', '543', 'sci-fi', false)
+    let book2 = new Book('1984', 'George Orwell', 'sci-fi', 543, false)
     addToLibrary(book2);
 
-    let book3 = new Book('Pride & Prejudice', 'Ann Herendeen', '700', 'drama', false)
+    let book3 = new Book('Pride & Prejudice', 'Ann Herendeen', 'drama', 700, false)
     addToLibrary(book3);
 
-    let book4 = new Book('Lord of the Flies', 'William Golding', '320', 'fiction', false)
+    let book4 = new Book('Lord of the Flies', 'William Golding', 'fiction', 320, false)
     addToLibrary(book4);
 
-    let book5 = new Book('The Hobbit', 'J.R.R. Tolkein', '310', 'fantasy', false)
+    let book5 = new Book('The Hobbit', 'J.R.R. Tolkein', 'fantasy', 310, false)
     addToLibrary(book5);
 
-    let book6 = new Book('Animal Farm', 'George Orwell', '180', 'fiction', false)
+    let book6 = new Book('Animal Farm', 'George Orwell', 'fiction', 180, false)
     addToLibrary(book6);
 }
 
