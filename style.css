@@ -128,7 +128,7 @@ footer {
     border-radius: 20px;
     padding: 15px;
     justify-items: center;
-    box-shadow: 10px 10px 0px 4px rgba(91,98,235,1);
+    
 }
 .book-card:hover {
     background-color: red;
@@ -202,6 +202,7 @@ left: 0px;
 top: 0px;
     border-radius: 50%;
     background-color: #bcbcbc;
+    cursor: pointer;
 
     transition: 0.5s;
 }

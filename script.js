@@ -20,7 +20,8 @@ submitButton.addEventListener('click', (e) => {
     const book = new Book(...bookValues);
     console.log(`book = ${book}`);
 
-    addToLibrary(book);
+    storeBook(book);
+    displayLibrary(book);
     form.reset();
 })
 
@@ -93,30 +94,48 @@ function Book(title, author, genre, pages, read) {
 
 function getBook() {
     let book = new Book('The Two Towers', 'J.R.R. Tolkein', 'fantasy', 310, false)
-    addToLibrary(book);
+    storeBook(book);
 
-    let book1 = new Book('A Brave New World', 'Aldous Huxley', 'sci-fi', 200, false)
-    addToLibrary(book1);
+    /*let book1 = new Book('A Brave New World', 'Aldous Huxley', 'sci-fi', 200, false)
+
+    myLibrary.push(book1);
 
     let book2 = new Book('1984', 'George Orwell', 'sci-fi', 543, false)
-    addToLibrary(book2);
 
-    let book3 = new Book('Pride & Prejudice', 'Ann Herendeen', 'drama', 700, false)
-    addToLibrary(book3);
+    myLibrary.push(book2);*/
+};
 
-    let book4 = new Book('Lord of the Flies', 'William Golding', 'fiction', 320, false)
-    addToLibrary(book4);
+function storeBook(book) {
+    myLibrary.push(book); //adds book to library array
+    const bookIndex = myLibrary.length - 1;
+    localStorage.setItem(`${bookIndex}`, JSON.stringify(book)); //copies book across to storage with matching index
 
-    let book5 = new Book('The Hobbit', 'J.R.R. Tolkein', 'fantasy', 310, false)
-    addToLibrary(book5);
+    console.log(`Storage Length: ${localStorage.length}`); //test
+};
 
-    let book6 = new Book('Animal Farm', 'George Orwell', 'fiction', 180, false)
-    addToLibrary(book6);
-}
+//pushes any stored books straight onto library array
+function checkStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+        savedBook = JSON.parse(localStorage.getItem(`${i}`));
+
+        myLibrary.push(savedBook);
+    };
+};
+
+
+function displayLibrary(book) {
+    if (myLibrary.length && !book) {
+        for (let i = 0; i < myLibrary.length; i++) {
+            addToLibrary(myLibrary[i])
+        };
+    } else if(book) {
+        addToLibrary(book);
+    };
+};
+
+
 
 function addToLibrary(book) {
-
-    myLibrary.push(book);
 
     const bookCard = document.createElement('div');
     bookCard.classList.add('book-card');
@@ -135,8 +154,6 @@ function addToLibrary(book) {
     const pages = document.createElement('p');
     pages.classList.add('page-number');
     pages.textContent = book.pages;
-
-    console.log(book.genre.icon);
 
     const icon = document.createElement('span');
     icon.classList.add('material-symbols-outlined');
@@ -175,7 +192,6 @@ function addToLibrary(book) {
     pageStack.appendChild(backCover);
 
     bookCard.appendChild(pageStack);
-
 };
 
 
@@ -183,8 +199,8 @@ function addToLibrary(book) {
 
 
 
-
-getBook();
+checkStorage();
+displayLibrary();
 console.log(myLibrary);
 //addToLibrary();
 
