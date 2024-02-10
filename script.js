@@ -7,10 +7,70 @@ const toggle = document.querySelector('#circle');
 const inputs = document.querySelectorAll('input')
 const not = document.querySelector('.not');
 const readText = document.querySelector('.read-text');
-const submitButton = document.querySelector('.add');
+const submitForm = document.querySelector('.add');
+const deleteLibrary = document.querySelector('.delete');
+const sort = document.querySelector('#sort');
+
+sort.addEventListener('change', (e) => {
+    let sortedLib = myLibrary.slice();
+    const selection = e.target.value;
+
+    if (selection === 'author-asc') {
+        sortedLib.sort((a, b) => {
+            return sortLibrary(a, b, 'author', 'asc');
+        });
+    } else if (selection === 'author-desc') {
+        sortedLib.sort((a, b) => {
+            return sortLibrary(a, b, 'author', 'desc');
+        });
+    } else if (selection === 'title-asc') {
+        sortedLib.sort((a, b) => {
+            return sortLibrary(a, b, 'title', 'asc');
+        });
+    } else if (selection === 'title-desc') {
+        sortedLib.sort((a, b) => {
+            return sortLibrary(a, b, 'title', 'desc');
+        });
+    };
+    console.log(sortedLib);
+    clearDisplay();
+    displayLibrary(sortedLib, null);
+});
+
+function sortLibrary(a, b, key, order) {
+    console.log(a[key]);
+    console.log(b[key]);
+
+    if (order === 'asc') {
+        if (a[key] < b[key]) {
+            return -1;
+        } else if (a[key] > b[key]) {
+            return 1;
+        } else return 0;
+    } else {
+        if (a[key] > b[key]) {
+            return -1;
+        } else if (a[key] < b[key]) {
+            return 1;
+        } else return 0;
+    };
+};
+
+deleteLibrary.addEventListener('click', () => {
+    localStorage.clear();
+    myLibrary.length = 0;
+    if (bookContainer.firstChild) {
+        clearDisplay();
+    } else {
+        deleteLibrary.style.backgroundColor = 'rgb(255, 98, 98)';
+        setTimeout(() => {
+            deleteLibrary.style.backgroundColor = '';
+        }, 500);
+    };
+});
 
 
-submitButton.addEventListener('click', (e) => {
+submitForm.addEventListener('click', (e) => {
     e.preventDefault();
     const form = document.querySelector('#book-form');
 
@@ -21,7 +81,7 @@ submitButton.addEventListener('click', (e) => {
     console.log(`book = ${book}`);
 
     storeBook(book);
-    displayLibrary(book);
+    displayLibrary(null, book);
     form.reset();
 })
 
@@ -123,14 +183,22 @@ function checkStorage() {
 };
 
 
-function displayLibrary(book) {
-    if (myLibrary.length && !book) {
-        for (let i = 0; i < myLibrary.length; i++) {
-            addToLibrary(myLibrary[i])
+function displayLibrary(library, book) {
+    if (library && !book) {
+        for (let i = 0; i < library.length; i++) {
+            addToLibrary(library[i])
         };
-    } else if(book) {
+    } else if (book) {
         addToLibrary(book);
     };
+    console.log('books generated!'); //test
+};
+
+function clearDisplay() {
+    while (bookContainer.firstChild) {
+        bookContainer.removeChild(bookContainer.firstChild);
+    };
+    console.log('display cleared!'); //test
 };
 
 
@@ -200,7 +268,7 @@ function addToLibrary(book) {
 
 
 checkStorage();
-displayLibrary();
+displayLibrary(myLibrary);
 console.log(myLibrary);
 //addToLibrary();
 
