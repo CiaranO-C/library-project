@@ -22,15 +22,30 @@
             <label for="search" class="search">Search</label>
             <input type="search" name="search" id="search">
         </div>
+        <select name="filter" id="filter">
+            <option value="placeholder">Filter</option>
+            <optgroup label="Read">
+                <option value="read" class="filter">Read</option>
+                <option value="not-read" class="filter">Not read</option>
+            </optgroup>
+            <optgroup label="By Genre">
+                <option value="drama">Drama</option>
+                <option value="sci-fi">Sci-Fi</option>
+                <option value="fiction">Fiction</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="non-fiction">Non-Fiction</option>
+                <option value="mystery">Mystery/Thriller</option>
+            </optgroup>
+        </select>
         <select name="sort" id="sort">
             <option value="placeholder">Sort</option>
             <optgroup label="Authors a-z">
-                <option value="author-asc">Ascending</option>
-                <option value="author-desc">Descending</option>
+                <option value="author">Ascending</option>
+                <option value="author">Descending</option>
             </optgroup>
             <optgroup label="Titles a-z">
-                <option value="title-asc">Ascending</option>
-                <option value="title-desc">Descending</option>
+                <option value="title">Ascending</option>
+                <option value="title">Descending</option>
             </optgroup>
         </select>
         <button class="delete">Delete Library</button>
@@ -74,8 +89,9 @@
             <button type="submit" class="add">Add Book</button>
         </form>
     </div>
+
+    <div class="filter-container"></div>
     <div class="book-container"></div>
-    <footer></footer>
 </body>
 
 </html>

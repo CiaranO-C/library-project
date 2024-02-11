@@ -1,6 +1,5 @@
 const myLibrary = [];
-let unreadBooks = myLibrary.filter(book => !book.read);
-let readBooks = myLibrary.filter(book => book.read);
+
 const bookContainer = document.querySelector('.book-container');
 const checkbox = document.querySelector('.checkbox');
 const toggle = document.querySelector('#circle');
@@ -10,55 +9,126 @@ const readText = document.querySelector('.read-text');
 const submitForm = document.querySelector('.add');
 const deleteLibrary = document.querySelector('.delete');
 const sort = document.querySelector('#sort');
+const filter = document.querySelector('#filter');
+const filterContainer = document.querySelector('.filter-container')
 
-sort.addEventListener('change', (e) => {
-    let sortedLib = myLibrary.slice();
-    const selection = e.target.value;
+let filteredLib = [];
+let sortedLib = [];
+let isFiltered = false;
+let isSorted = false;
 
-    if (selection === 'author-asc') {
-        sortedLib.sort((a, b) => {
-            return sortLibrary(a, b, 'author', 'asc');
-        });
-    } else if (selection === 'author-desc') {
-        sortedLib.sort((a, b) => {
-            return sortLibrary(a, b, 'author', 'desc');
-        });
-    } else if (selection === 'title-asc') {
-        sortedLib.sort((a, b) => {
-            return sortLibrary(a, b, 'title', 'asc');
-        });
-    } else if (selection === 'title-desc') {
-        sortedLib.sort((a, b) => {
-            return sortLibrary(a, b, 'title', 'desc');
-        });
+
+filter.addEventListener('change', (e) => {
+    const select = e.target;
+    const value = select.value;
+    const text = select.options[select.selectedIndex].text;
+
+    if (isSorted) {
+        if (isFiltered) {
+            sortedLib = myLibrary.slice();
+            console.log(sortedLib);
+            sortBooks();
+            filterBooks(sortedLib, value);
+        } else {
+            filterBooks(sortedLib, value);
+        };
+    } else {
+        filterBooks(myLibrary, value);
     };
-    console.log(sortedLib);
+
     clearDisplay();
-    displayLibrary(sortedLib, null);
+    columnCount = 0;
+    displayLibrary(filteredLib, null);
+
+    addBubbleIcon(text);
+    isFiltered = true;
 });
 
-function sortLibrary(a, b, key, order) {
-    console.log(a[key]);
-    console.log(b[key]);
-
-    if (order === 'asc') {
-        if (a[key] < b[key]) {
-            return -1;
-        } else if (a[key] > b[key]) {
-            return 1;
-        } else return 0;
+function filterBooks(books, value) {
+    if (value === 'read') {
+        filteredLib = books.filter(book => book.read);
+    } else if (value === 'not-read') {
+        filteredLib = books.filter(book => !book.read);
     } else {
-        if (a[key] > b[key]) {
-            return -1;
-        } else if (a[key] < b[key]) {
-            return 1;
-        } else return 0;
+        filteredLib = books.filter(book => book.genre === value);
     };
 };
+
+function addBubbleIcon(filterName) {
+
+    if (filterContainer.firstChild) {
+        filterContainer.removeChild(filterContainer.firstChild);
+    };
+
+    const bubble = document.createElement('div');
+    bubble.classList.add('filter-bubble');
+
+    const text = document.createElement('span');
+    text.textContent = filterName;
+
+    const icon = document.createElement('span');
+    icon.classList.add('material-symbols-outlined');
+    icon.textContent = 'close';
+
+    bubble.append(text, icon);
+    filterContainer.appendChild(bubble);
+};
+
+
+function sortBooks() {
+    const value = sort.value;
+    const text = sort.options[sort.selectedIndex].text;
+
+    sortedLib.sort((a, b) => {
+        const bookA = a[value];
+        const bookB = b[value];
+
+        if (text === 'Ascending') {
+            if (bookA < bookB) {
+                return -1;
+            } else if (bookA > bookB) {
+                return 1;
+            } else return 0;
+        } else {
+            if (bookA > bookB) {
+                return -1;
+            } else if (bookA < bookB) {
+                return 1;
+            } else return 0;
+        };
+    });
+
+    console.log(`sorted array: ${sortedLib}`);
+};
+
+function copyLibrary() {
+    if (isFiltered) {
+        sortedLib = filteredLib.slice();
+    } else {
+        sortedLib = myLibrary.slice();
+    };
+};
+
+
+sort.addEventListener('change', () => {
+    const text = sort.options[sort.selectedIndex].text
+
+    copyLibrary();
+
+    sortBooks();
+
+    clearDisplay();
+    columnCount = 0;
+    displayLibrary(sortedLib, null);
+    addBubbleIcon(text);
+    isSorted = true;
+});
+
 
 deleteLibrary.addEventListener('click', () => {
     localStorage.clear();
     myLibrary.length = 0;
+    columnCount = 0;
     if (bookContainer.firstChild) {
         clearDisplay();
     } else {
@@ -201,9 +271,17 @@ function clearDisplay() {
     console.log('display cleared!'); //test
 };
 
-
+let columnCount = 0;
 
 function addToLibrary(book) {
+
+    if (columnCount === 4) {
+        const line = document.createElement('div')
+        line.classList.add('dividing-line');
+        bookContainer.appendChild(line);
+        columnCount = 0
+    }
+    columnCount++;
 
     const bookCard = document.createElement('div');
     bookCard.classList.add('book-card');
