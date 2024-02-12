@@ -12,6 +12,7 @@ const sort = document.querySelector('#sort');
 const filter = document.querySelector('#filter');
 const filterContainer = document.querySelector('.filter-container')
 
+
 let filteredLib = [];
 let sortedLib = [];
 let isFiltered = false;
@@ -23,28 +24,20 @@ filter.addEventListener('change', (e) => {
     const value = select.value;
     const text = select.options[select.selectedIndex].text;
 
-    if (isSorted) {
-        if (isFiltered) {
-            sortedLib = myLibrary.slice();
-            console.log(sortedLib);
-            sortBooks();
-            filterBooks(sortedLib, value);
-        } else {
-            filterBooks(sortedLib, value);
-        };
-    } else {
-        filterBooks(myLibrary, value);
-    };
+    addBubbleIcon(text);
+
+    filterBooks();
 
     clearDisplay();
-    columnCount = 0;
-    displayLibrary(filteredLib, null);
-
-    addBubbleIcon(text);
-    isFiltered = true;
+    displayLibrary();
 });
 
-function filterBooks(books, value) {
+function filterBooks() {
+    const value = filter.value;
+    isFiltered = true;
+    let books = [];
+    (isSorted) ? books = sortedLib : books = myLibrary;
+
     if (value === 'read') {
         filteredLib = books.filter(book => book.read);
     } else if (value === 'not-read') {
@@ -60,7 +53,7 @@ function addBubbleIcon(filterName) {
         filterContainer.removeChild(filterContainer.firstChild);
     };
 
-    const bubble = document.createElement('div');
+    const bubble = document.createElement('button');
     bubble.classList.add('filter-bubble');
 
     const text = document.createElement('span');
@@ -78,6 +71,8 @@ function addBubbleIcon(filterName) {
 function sortBooks() {
     const value = sort.value;
     const text = sort.options[sort.selectedIndex].text;
+    sortedLib = myLibrary.slice();
+    isSorted = true;
 
     sortedLib.sort((a, b) => {
         const bookA = a[value];
@@ -101,34 +96,23 @@ function sortBooks() {
     console.log(`sorted array: ${sortedLib}`);
 };
 
-function copyLibrary() {
-    if (isFiltered) {
-        sortedLib = filteredLib.slice();
-    } else {
-        sortedLib = myLibrary.slice();
-    };
-};
-
 
 sort.addEventListener('change', () => {
-    const text = sort.options[sort.selectedIndex].text
-
-    copyLibrary();
-
-    sortBooks();
-
-    clearDisplay();
-    columnCount = 0;
-    displayLibrary(sortedLib, null);
+    const text = sort.options[sort.selectedIndex].text;
     addBubbleIcon(text);
-    isSorted = true;
+    sortBooks(); //sorts entire library every time
+
+    if (isFiltered) {
+        filterBooks();
+    }
+    clearDisplay();
+    displayLibrary();
 });
 
 
 deleteLibrary.addEventListener('click', () => {
     localStorage.clear();
     myLibrary.length = 0;
-    columnCount = 0;
     if (bookContainer.firstChild) {
         clearDisplay();
     } else {
@@ -151,7 +135,7 @@ submitForm.addEventListener('click', (e) => {
     console.log(`book = ${book}`);
 
     storeBook(book);
-    displayLibrary(null, book);
+    displayLibrary(book);
     form.reset();
 })
 
@@ -222,18 +206,6 @@ function Book(title, author, genre, pages, read) {
 };
 
 
-function getBook() {
-    let book = new Book('The Two Towers', 'J.R.R. Tolkein', 'fantasy', 310, false)
-    storeBook(book);
-
-    /*let book1 = new Book('A Brave New World', 'Aldous Huxley', 'sci-fi', 200, false)
-
-    myLibrary.push(book1);
-
-    let book2 = new Book('1984', 'George Orwell', 'sci-fi', 543, false)
-
-    myLibrary.push(book2);*/
-};
 
 function storeBook(book) {
     myLibrary.push(book); //adds book to library array
@@ -253,18 +225,27 @@ function checkStorage() {
 };
 
 
-function displayLibrary(library, book) {
-    if (library && !book) {
+
+function displayLibrary(book) {
+    if (book) {
+        addToLibrary(book);
+    } else {
+        let library = [];
+        if (isFiltered) {
+            library = filteredLib;
+        } else if (isSorted) {
+            library = sortedLib;
+        } else library = myLibrary;
+
         for (let i = 0; i < library.length; i++) {
             addToLibrary(library[i])
-        };
-    } else if (book) {
-        addToLibrary(book);
+        }
+        console.log('books generated!'); //test
     };
-    console.log('books generated!'); //test
 };
 
 function clearDisplay() {
+    columnCount = 0;
     while (bookContainer.firstChild) {
         bookContainer.removeChild(bookContainer.firstChild);
     };
@@ -279,7 +260,7 @@ function addToLibrary(book) {
         const line = document.createElement('div')
         line.classList.add('dividing-line');
         bookContainer.appendChild(line);
-        columnCount = 0
+        columnCount = 0;
     }
     columnCount++;
 
@@ -346,7 +327,7 @@ function addToLibrary(book) {
 
 
 checkStorage();
-displayLibrary(myLibrary);
+displayLibrary();
 console.log(myLibrary);
 //addToLibrary();
 
