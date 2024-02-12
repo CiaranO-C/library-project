@@ -12,6 +12,27 @@ const sort = document.querySelector('#sort');
 const filter = document.querySelector('#filter');
 const filterContainer = document.querySelector('.filter-container')
 
+function cancelBtnListener (node) {
+    node.addEventListener('click', ()=>{
+        node.remove();
+        if(node.classList.contains('filter')){
+            filter.value = 'placeholder';
+            isFiltered = false;
+            clearDisplay();
+            displayLibrary();
+        } else {
+            sort.value = 'placeholder';
+            isSorted = false;
+            if(isFiltered) {
+                filterBooks();
+            };
+            clearDisplay();
+            displayLibrary();
+        }; 
+    });
+};
+
+
 
 let filteredLib = [];
 let sortedLib = [];
@@ -58,7 +79,7 @@ function addBubbleIcon(type) {
     }
 
     const bubble = document.createElement('button');
-    bubble.classList.add('filter-bubble', `${type}`);
+    bubble.classList.add('filter-button', `${type}`);
 
     const btnText = document.createElement('span');
     btnText.textContent = selectionText;
@@ -68,6 +89,7 @@ function addBubbleIcon(type) {
     icon.textContent = 'close';
 
     bubble.append(btnText, icon);
+    cancelBtnListener(bubble);
 
     //checks for pre-existing filter/sort icons, replaces if found with new selection
     const elems = Array.from(filterContainer.childNodes);
@@ -89,8 +111,6 @@ function sortBooks() {
     sortedLib = myLibrary.slice();
     isSorted = true;
 
-    //if value is placeholder then jump to end if not then enter sort
-    if (value !== 'placeholder') {
         sortedLib.sort((a, b) => {
             const bookA = a[value];
             const bookB = b[value];
@@ -109,8 +129,6 @@ function sortBooks() {
                 } else return 0;
             };
         });
-    };
-
     console.log(`sorted array: ${sortedLib}`);
 };
 
