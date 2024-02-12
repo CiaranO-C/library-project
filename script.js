@@ -24,7 +24,7 @@ filter.addEventListener('change', (e) => {
     const value = select.value;
     const text = select.options[select.selectedIndex].text;
 
-    addBubbleIcon(text);
+    addBubbleIcon('filter');
 
     filterBooks();
 
@@ -47,24 +47,39 @@ function filterBooks() {
     };
 };
 
-function addBubbleIcon(filterName) {
+function addBubbleIcon(type) {
 
-    if (filterContainer.firstChild) {
-        filterContainer.removeChild(filterContainer.firstChild);
-    };
+    let selectionText = '';
+
+    if (type === 'filter') {
+        selectionText = filter.options[filter.selectedIndex].text;
+    } else if (type === 'sort') {
+        selectionText = sort.options[sort.selectedIndex].text;
+    }
 
     const bubble = document.createElement('button');
-    bubble.classList.add('filter-bubble');
+    bubble.classList.add('filter-bubble', `${type}`);
 
-    const text = document.createElement('span');
-    text.textContent = filterName;
+    const btnText = document.createElement('span');
+    btnText.textContent = selectionText;
 
     const icon = document.createElement('span');
     icon.classList.add('material-symbols-outlined');
     icon.textContent = 'close';
 
-    bubble.append(text, icon);
-    filterContainer.appendChild(bubble);
+    bubble.append(btnText, icon);
+
+    //checks for pre-existing filter/sort icons, replaces if found with new selection
+    const elems = Array.from(filterContainer.childNodes);
+    let matchFound = false;
+    elems.forEach(elem => {
+        if (elem.classList.contains(type)) {
+            filterContainer.replaceChild(bubble, elem);
+            matchFound = true;
+        };
+    });
+    // if not found adds as new icon
+    if (!matchFound) filterContainer.appendChild(bubble);
 };
 
 
@@ -74,32 +89,35 @@ function sortBooks() {
     sortedLib = myLibrary.slice();
     isSorted = true;
 
-    sortedLib.sort((a, b) => {
-        const bookA = a[value];
-        const bookB = b[value];
+    //if value is placeholder then jump to end if not then enter sort
+    if (value !== 'placeholder') {
+        sortedLib.sort((a, b) => {
+            const bookA = a[value];
+            const bookB = b[value];
 
-        if (text === 'Ascending') {
-            if (bookA < bookB) {
-                return -1;
-            } else if (bookA > bookB) {
-                return 1;
-            } else return 0;
-        } else {
-            if (bookA > bookB) {
-                return -1;
-            } else if (bookA < bookB) {
-                return 1;
-            } else return 0;
-        };
-    });
+            if (text === 'Ascending') {
+                if (bookA < bookB) {
+                    return -1;
+                } else if (bookA > bookB) {
+                    return 1;
+                } else return 0;
+            } else {
+                if (bookA > bookB) {
+                    return -1;
+                } else if (bookA < bookB) {
+                    return 1;
+                } else return 0;
+            };
+        });
+    };
 
     console.log(`sorted array: ${sortedLib}`);
 };
 
 
 sort.addEventListener('change', () => {
-    const text = sort.options[sort.selectedIndex].text;
-    addBubbleIcon(text);
+    //const text = sort.options[sort.selectedIndex].text;
+    addBubbleIcon('sort');
     sortBooks(); //sorts entire library every time
 
     if (isFiltered) {
