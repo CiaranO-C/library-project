@@ -1,4 +1,5 @@
 const myLibrary = [];
+let searchLib = [];
 
 const bookContainer = document.querySelector('.book-container');
 const checkbox = document.querySelector('.checkbox');
@@ -10,12 +11,32 @@ const submitForm = document.querySelector('.add');
 const deleteLibrary = document.querySelector('.delete');
 const sort = document.querySelector('#sort');
 const filter = document.querySelector('#filter');
-const filterContainer = document.querySelector('.filter-container')
+const filterContainer = document.querySelector('.filter-container');
+const search = document.querySelector('#search');
 
-function cancelBtnListener (node) {
-    node.addEventListener('click', ()=>{
+search.addEventListener('keyup', () => {
+    searchLib = myLibrary.filter(book => {
+        return book.title.startsWith(search.value);
+    });
+
+    clearDisplay();
+
+    isFiltered = false;
+    filter.value = 'placeholder';
+    isSorted = false;
+    sort.value = 'placeholder';
+
+    while (filterContainer.firstChild) {
+        filterContainer.removeChild(filterContainer.firstChild);
+    };
+
+    searchLib.forEach(book => displayLibrary(book));
+});
+
+function cancelBtnListener(node) {
+    node.addEventListener('click', () => {
         node.remove();
-        if(node.classList.contains('filter')){
+        if (node.classList.contains('filter')) {
             filter.value = 'placeholder';
             isFiltered = false;
             clearDisplay();
@@ -23,12 +44,12 @@ function cancelBtnListener (node) {
         } else {
             sort.value = 'placeholder';
             isSorted = false;
-            if(isFiltered) {
+            if (isFiltered) {
                 filterBooks();
             };
             clearDisplay();
             displayLibrary();
-        }; 
+        };
     });
 };
 
@@ -111,24 +132,24 @@ function sortBooks() {
     sortedLib = myLibrary.slice();
     isSorted = true;
 
-        sortedLib.sort((a, b) => {
-            const bookA = a[value];
-            const bookB = b[value];
+    sortedLib.sort((a, b) => {
+        const bookA = a[value];
+        const bookB = b[value];
 
-            if (text === 'Ascending') {
-                if (bookA < bookB) {
-                    return -1;
-                } else if (bookA > bookB) {
-                    return 1;
-                } else return 0;
-            } else {
-                if (bookA > bookB) {
-                    return -1;
-                } else if (bookA < bookB) {
-                    return 1;
-                } else return 0;
-            };
-        });
+        if (text === 'Ascending') {
+            if (bookA < bookB) {
+                return -1;
+            } else if (bookA > bookB) {
+                return 1;
+            } else return 0;
+        } else {
+            if (bookA > bookB) {
+                return -1;
+            } else if (bookA < bookB) {
+                return 1;
+            } else return 0;
+        };
+    });
     console.log(`sorted array: ${sortedLib}`);
 };
 
