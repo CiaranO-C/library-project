@@ -40,11 +40,11 @@ function bookButtonListener(node) {
                 if (child.textContent === 'book_2') {
                     myLibrary[index].read = false;
                     child.textContent = 'auto_stories';
-                    text.textContent = 'Not Read'
+                    text.textContent = 'Not Read';
                 } else {
                     myLibrary[index].read = true;
                     child.textContent = 'book_2';
-                    text.textContent = 'Read'
+                    text.textContent = 'Read';
                 };
                 node.appendChild(text);
                 setTimeout(()=> text.remove(), 9000);

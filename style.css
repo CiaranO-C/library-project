@@ -421,8 +421,33 @@ transition: 0.6s;
     font-size: 14px;
 }
 
-.btn-text {
-    text-align: center;
-    position: relative;
-    bottom: 30px;
+@keyframes slide-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    10%{
+        opacity: 0;
+    }
+    20%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    80%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    87%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 0;
+        transform: translateY(-50px);
+    }
 }
+
+.btn-text {
+    font-size: 12px;
+    animation: slide-down 5s forwards;
+}
+
