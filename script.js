@@ -1,4 +1,4 @@
-const myLibrary = [];
+let myLibrary = [];
 let searchLib = [];
 
 const bookContainer = document.querySelector('.book-container');
@@ -13,6 +13,47 @@ const sort = document.querySelector('#sort');
 const filter = document.querySelector('#filter');
 const filterContainer = document.querySelector('.filter-container');
 const search = document.querySelector('#search');
+
+function updateStorage() {
+localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+};
+
+
+function bookButtonListener(node) {
+    node.childNodes.forEach(child => {
+        child.addEventListener('click', () => {
+            const index = bookBtnArr.indexOf(node);
+            if (child === node.firstChild) {
+
+                myLibrary.splice(index, 1);
+                console.log(`lib length: ${myLibrary.length}`);
+                bookBtnArr.splice(index, 1);
+                console.log(`nodeArr: ${bookBtnArr.length}`);
+
+                updateStorage();
+                
+                clearDisplay();
+                displayLibrary();
+            } else {
+                let text = document.createElement('p');
+                text.classList.add('btn-text');
+                if (child.textContent === 'book_2') {
+                    myLibrary[index].read = false;
+                    child.textContent = 'auto_stories';
+                    text.textContent = 'Not Read'
+                } else {
+                    myLibrary[index].read = true;
+                    child.textContent = 'book_2';
+                    text.textContent = 'Read'
+                };
+                node.appendChild(text);
+                setTimeout(()=> text.remove(), 9000);
+                localStorage.setItem(`${index}`, JSON.stringify(myLibrary[index]));
+            };
+        })
+    })
+}
+
 
 search.addEventListener('keyup', () => {
     searchLib = myLibrary.filter(book => {
@@ -266,19 +307,15 @@ function Book(title, author, genre, pages, read) {
 
 function storeBook(book) {
     myLibrary.push(book); //adds book to library array
-    const bookIndex = myLibrary.length - 1;
-    localStorage.setItem(`${bookIndex}`, JSON.stringify(book)); //copies book across to storage with matching index
-
-    console.log(`Storage Length: ${localStorage.length}`); //test
+    updateStorage();
 };
 
 //pushes any stored books straight onto library array
 function checkStorage() {
-    for (let i = 0; i < localStorage.length; i++) {
-        savedBook = JSON.parse(localStorage.getItem(`${i}`));
-
-        myLibrary.push(savedBook);
-    };
+  if(localStorage.length){
+    const myLibraryString = localStorage.getItem('myLibrary');
+    myLibrary = JSON.parse(myLibraryString);
+  };
 };
 
 
@@ -302,6 +339,7 @@ function displayLibrary(book) {
 };
 
 function clearDisplay() {
+    bookBtnArr.length = 0;
     columnCount = 0;
     while (bookContainer.firstChild) {
         bookContainer.removeChild(bookContainer.firstChild);
@@ -310,6 +348,7 @@ function clearDisplay() {
 };
 
 let columnCount = 0;
+const bookBtnArr = [];
 
 function addToLibrary(book) {
 
@@ -320,6 +359,23 @@ function addToLibrary(book) {
         columnCount = 0;
     }
     columnCount++;
+
+    const bookButtons = document.createElement('div');
+    bookButtons.classList.add('book-buttons-container');
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('book-btn', 'delete-btn', 'material-symbols-outlined');
+    deleteBtn.textContent = 'close';
+
+    const readBtn = document.createElement('button');
+    readBtn.classList.add('book-btn', 'read-btn', 'material-symbols-outlined');
+    (book.read)?readBtn.textContent = 'book_2' : readBtn.textContent = 'auto_stories';
+
+    bookButtons.append(deleteBtn, readBtn);
+    bookBtnArr.push(bookButtons);
+    bookButtonListener(bookButtons);
+
+    bookContainer.appendChild(bookButtons);
 
     const bookCard = document.createElement('div');
     bookCard.classList.add('book-card');
