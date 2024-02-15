@@ -18,8 +18,11 @@ function updateStorage() {
     localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
 };
 
+function toggleReadValue (node) {
+    myLibrary[findBookIndex(node)].toggleRead();
+};
 
-function deleteFromLibrary(node) {
+function findBookIndex(node) {
     const book = node.nextElementSibling;
     const bookInfo = book.childNodes;
     let title;
@@ -39,10 +42,15 @@ function deleteFromLibrary(node) {
         };
     };
 
-    const indexToDelete = myLibrary.findIndex(matching);
+    const index = myLibrary.findIndex(matching);
 
-    myLibrary.splice(indexToDelete, 1);
-}
+    return index;
+};
+
+
+function deleteFromLibrary(node) {
+    myLibrary.splice(findBookIndex(node), 1);
+};
 
 
 
@@ -72,18 +80,17 @@ function bookButtonListener(node) {
             } else {
                 let text = document.createElement('p');
                 text.classList.add('btn-text');
+                toggleReadValue(node);
+                updateStorage();
                 if (child.textContent === 'book_2') {
-                    myLibrary[index].read = false;
                     child.textContent = 'auto_stories';
                     text.textContent = 'Not Read';
                 } else {
-                    myLibrary[index].read = true;
                     child.textContent = 'book_2';
                     text.textContent = 'Read';
                 };
                 node.appendChild(text);
                 setTimeout(() => text.remove(), 2300);
-                localStorage.setItem(`${index}`, JSON.stringify(myLibrary[index]));
             };
         })
     })
@@ -335,6 +342,14 @@ function Book(title, author, genre, pages, read) {
         case 'mystery':
             this.genreIcon = 'mystery';
             break;
+    };
+};
+
+Book.prototype.toggleRead = function () {
+    if(this.read === true){
+        this.read = false;
+    } else {
+        this.read = true;
     };
 };
 
