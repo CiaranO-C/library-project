@@ -15,8 +15,35 @@ const filterContainer = document.querySelector('.filter-container');
 const search = document.querySelector('#search');
 
 function updateStorage() {
-localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
 };
+
+
+function deleteFromLibrary(node) {
+    const book = node.nextElementSibling;
+    const bookInfo = book.childNodes;
+    let title;
+    let author;
+
+    const matching = (elem) => {
+        if (elem.title === title) {
+            return elem.author === author;
+        };
+    };
+
+    for (let i = 0; i < 3; i++) {
+        if (bookInfo[i].classList.contains('title')) {
+            title = bookInfo[i].textContent;
+        } else if (bookInfo[i].classList.contains('author')) {
+            author = bookInfo[i].textContent;
+        };
+    };
+
+    const indexToDelete = myLibrary.findIndex(matching);
+
+    myLibrary.splice(indexToDelete, 1);
+}
+
 
 
 function bookButtonListener(node) {
@@ -25,15 +52,23 @@ function bookButtonListener(node) {
             const index = bookBtnArr.indexOf(node);
             if (child === node.firstChild) {
 
-                myLibrary.splice(index, 1);
-                console.log(`lib length: ${myLibrary.length}`);
-                bookBtnArr.splice(index, 1);
-                console.log(`nodeArr: ${bookBtnArr.length}`);
+                deleteFromLibrary(node);
 
                 updateStorage();
-                
+
                 clearDisplay();
+
+                if (isFiltered && isSorted) {
+                    sortBooks();
+                    filterBooks();
+                } else if (isFiltered) {
+                    filterBooks();
+                } else if (isSorted) {
+                    sortBooks();
+                };
+
                 displayLibrary();
+
             } else {
                 let text = document.createElement('p');
                 text.classList.add('btn-text');
@@ -47,7 +82,7 @@ function bookButtonListener(node) {
                     text.textContent = 'Read';
                 };
                 node.appendChild(text);
-                setTimeout(()=> text.remove(), 9000);
+                setTimeout(() => text.remove(), 2300);
                 localStorage.setItem(`${index}`, JSON.stringify(myLibrary[index]));
             };
         })
@@ -312,10 +347,10 @@ function storeBook(book) {
 
 //pushes any stored books straight onto library array
 function checkStorage() {
-  if(localStorage.length){
-    const myLibraryString = localStorage.getItem('myLibrary');
-    myLibrary = JSON.parse(myLibraryString);
-  };
+    if (localStorage.length) {
+        const myLibraryString = localStorage.getItem('myLibrary');
+        myLibrary = JSON.parse(myLibraryString);
+    };
 };
 
 
@@ -369,7 +404,7 @@ function addToLibrary(book) {
 
     const readBtn = document.createElement('button');
     readBtn.classList.add('book-btn', 'read-btn', 'material-symbols-outlined');
-    (book.read)?readBtn.textContent = 'book_2' : readBtn.textContent = 'auto_stories';
+    (book.read) ? readBtn.textContent = 'book_2' : readBtn.textContent = 'auto_stories';
 
     bookButtons.append(deleteBtn, readBtn);
     bookBtnArr.push(bookButtons);
@@ -433,10 +468,6 @@ function addToLibrary(book) {
 
     bookCard.appendChild(pageStack);
 };
-
-
-
-
 
 
 checkStorage();

@@ -11,26 +11,36 @@ body {
 
     display: grid;
     grid-template-columns: 1fr 5fr;
-    grid-template-rows: 1fr 60px 7fr ;
+    grid-template-rows: 1fr 60px 7fr;
     background-color: rgb(194, 183, 153);
     gap: 20px;
-    
+
 }
 
 header {
-    
+
     grid-column: 2 / -1;
     grid-row: 1 / 2;
     background-color: #e7e7e7;
     border-radius: 15px;
-align-items: center;
+    align-items: center;
     display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: 24px 2fr 1fr 1fr auto;
     margin-top: 20px;
     margin-right: 20px;
-   
+    column-gap: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+
 }
+
+header>span {
+    position: relative;
+    top: 1px;
+    color: #787878;
+}
+
+
 
 
 
@@ -46,13 +56,14 @@ h1 {
     grid-row: 2 / -1;
     background-color: rgb(230, 230, 230);
     z-index: 0;
-   
+
 
     display: grid;
     grid-auto-rows: auto;
-    grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr;
+    grid-template-columns: 30px 1fr 30px 1fr 30px 1fr 30px 1fr;
     justify-items: center;
     row-gap: 35px;
+    padding-left: 50px;
     padding-right: 50px;
     padding-bottom: 50px;
     padding-top: 70px;
@@ -76,15 +87,15 @@ h1 {
 
 .book-cover,
 .book-card {
-   
+
     background-color: rgba(104, 80, 0, 1);
-    
+
     border: 2px solid #685000;
-    border-right:3px solid #544000;
+    border-right: 3px solid #544000;
     height: 182px;
     width: 117px;
     padding: 15px;
-    
+
 }
 
 .book-card {
@@ -100,7 +111,8 @@ h1 {
     justify-items: center;
     align-items: center;
 
-    
+    margin-left: 12px;
+    margin-right: 45px;
 
 }
 
@@ -147,8 +159,8 @@ footer {
     margin-left: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
-    
-    
+
+
 }
 
 
@@ -192,10 +204,10 @@ footer {
 }
 
 .slide-container {
-position: relative;
-width: auto;
-height: auto;
-margin-top: 8px;
+    position: relative;
+    width: auto;
+    height: auto;
+    margin-top: 8px;
 }
 
 .checkbox {
@@ -206,18 +218,18 @@ margin-top: 8px;
     height: 20px;
     border: 2px solid rgba(1, 1, 1, 1);
 
-    background-color: rgb(195, 195, 195)    ;
+    background-color: rgb(195, 195, 195);
     border-radius: 10px;
     transition: 1s;
 }
 
 #circle {
-    width:18px;
-    height:18px;
+    width: 18px;
+    height: 18px;
     border: 1px solid black;
-position: absolute;
-left: 0px;
-top: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
     border-radius: 50%;
     background-color: #bcbcbc;
     cursor: pointer;
@@ -246,13 +258,12 @@ top: 0px;
 
 select,
 header input,
-#book-form input[type='text'], 
-#book-form input[type='number']
-{
+#book-form input[type='text'],
+#book-form input[type='number'] {
     appearance: none;
 
     border: none;
-border-bottom: 1px solid grey;
+    border-bottom: 1px solid grey;
     background-color: #e7e7e7;
 }
 
@@ -300,8 +311,8 @@ button {
 }
 
 button:hover {
-background-color: #d3c39f;
-transition: 0.6s;
+    background-color: #d3c39f;
+    transition: 0.6s;
 }
 
 .btn-error {
@@ -339,8 +350,8 @@ transition: 0.6s;
     margin: 10px;
     margin-right: 25px;
     padding-left: 20px;
-    
-    
+
+
     display: flex;
     align-items: center;
     gap: 20px;
@@ -349,14 +360,14 @@ transition: 0.6s;
 .filter-button {
     border: none;
     flex: 0 1 auto;
-   height: 30px;
+    height: 30px;
     background-color: #656565;
     display: grid;
     grid-template-columns: auto auto;
- align-items: center;
+    align-items: center;
     border-radius: 20px;
-   padding: 2px 5px 2px 10px;
-   transition: 0.3s;
+    padding: 2px 5px 2px 10px;
+    transition: 0.3s;
 }
 
 .filter-button:hover {
@@ -365,7 +376,7 @@ transition: 0.6s;
     transition: 0.3s;
 }
 
-.filter-button span{
+.filter-button span {
     color: #d2d2d2;
 }
 
@@ -375,12 +386,16 @@ transition: 0.6s;
     position: relative;
     top: 0.5px;
     font-size: 15px;
-    
-   margin-left: 12px;
+
+    margin-left: 12px;
 }
 
 .delete {
     width: 111px;
+    background-color: #bcbcbc;
+    border: 1px solid black;
+    height: 40px;
+    border-radius: 20px;
 }
 
 .dividing-line {
@@ -393,12 +408,10 @@ transition: 0.6s;
     top: 6px;
 }
 
-.book-buttons-container{
+.book-buttons-container {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-left: 50px;
-    margin-right: 15px;
 }
 
 .book-btn {
@@ -426,21 +439,26 @@ transition: 0.6s;
         opacity: 0;
         transform: translateY(-50px);
     }
-    10%{
+
+    10% {
         opacity: 0;
     }
-    20%{
+
+    20% {
         opacity: 1;
         transform: translateY(0px);
     }
-    80%{
+
+    80% {
         opacity: 1;
         transform: translateY(0px);
     }
-    87%{
+
+    87% {
         opacity: 0;
     }
-    100%{
+
+    100% {
         opacity: 0;
         transform: translateY(-50px);
     }
@@ -448,6 +466,6 @@ transition: 0.6s;
 
 .btn-text {
     font-size: 12px;
-    animation: slide-down 5s forwards;
+    animation: slide-down 2.3s forwards;
+    text-wrap: wrap;
 }
-
