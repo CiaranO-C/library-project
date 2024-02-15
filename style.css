@@ -467,5 +467,24 @@ button:hover {
 .btn-text {
     font-size: 12px;
     animation: slide-down 2.3s forwards;
-    text-wrap: wrap;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.error-msg {
+    color: red;
+    font-size: 10px;
+    animation: fade 5s forwards;
+    position: absolute;
+    bottom: 110px;
 }

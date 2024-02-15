@@ -18,7 +18,7 @@ function updateStorage() {
     localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
 };
 
-function toggleReadValue (node) {
+function toggleReadValue(node) {
     myLibrary[findBookIndex(node)].toggleRead();
 };
 
@@ -263,11 +263,35 @@ deleteLibrary.addEventListener('click', () => {
     };
 });
 
+function validateForm(form) {
+    const inputs = Array.from(form.elements);
+
+    for (let i = 0; i < 4; i++) {
+        const value = inputs[i].value;
+        if (!value) {
+            return false;
+        };
+    };
+    return true;
+};
+
+function errorMessage(e) {
+    const button = e.target;
+    const errorMessage = document.createElement('p');
+    errorMessage.classList.add('error-msg');
+    errorMessage.textContent = 'Please fill out all fields.';
+
+    button.insertAdjacentElement('beforebegin', errorMessage);
+    setTimeout(() => errorMessage.remove(), 5000);
+};
+
 
 submitForm.addEventListener('click', (e) => {
+
+
     e.preventDefault();
     const form = document.querySelector('#book-form');
-
+    if (!validateForm(form)) return errorMessage(e);
     const formData = new FormData(form);
 
     const bookValues = Array.from(formData.values());
@@ -346,7 +370,7 @@ function Book(title, author, genre, pages, read) {
 };
 
 Book.prototype.toggleRead = function () {
-    if(this.read === true){
+    if (this.read === true) {
         this.read = false;
     } else {
         this.read = true;
