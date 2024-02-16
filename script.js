@@ -1,339 +1,9 @@
-let myLibrary = [];
-let searchLib = [];
-
 const bookContainer = document.querySelector('.book-container');
-const checkbox = document.querySelector('.checkbox');
-const toggle = document.querySelector('#circle');
-const inputs = document.querySelectorAll('input')
-const not = document.querySelector('.not');
-const readText = document.querySelector('.read-text');
-const submitForm = document.querySelector('.add');
-const deleteLibrary = document.querySelector('.delete');
+const inputs = document.querySelectorAll('input');
+const submitButton = document.querySelector('.add');
 const sort = document.querySelector('#sort');
 const filter = document.querySelector('#filter');
 const filterContainer = document.querySelector('.filter-container');
-const search = document.querySelector('#search');
-
-function updateStorage() {
-    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
-};
-
-function toggleReadValue(node) {
-    myLibrary[findBookIndex(node)].toggleRead();
-};
-
-function findBookIndex(node) {
-    const book = node.nextElementSibling;
-    const bookInfo = book.childNodes;
-    let title;
-    let author;
-
-    const matching = (elem) => {
-        if (elem.title === title) {
-            return elem.author === author;
-        };
-    };
-
-    for (let i = 0; i < 3; i++) {
-        if (bookInfo[i].classList.contains('title')) {
-            title = bookInfo[i].textContent;
-        } else if (bookInfo[i].classList.contains('author')) {
-            author = bookInfo[i].textContent;
-        };
-    };
-
-    const index = myLibrary.findIndex(matching);
-
-    return index;
-};
-
-
-function deleteFromLibrary(node) {
-    myLibrary.splice(findBookIndex(node), 1);
-};
-
-
-
-function bookButtonListener(node) {
-    node.childNodes.forEach(child => {
-        child.addEventListener('click', () => {
-            const index = bookBtnArr.indexOf(node);
-            if (child === node.firstChild) {
-
-                deleteFromLibrary(node);
-
-                updateStorage();
-
-                clearDisplay();
-
-                if (isFiltered && isSorted) {
-                    sortBooks();
-                    filterBooks();
-                } else if (isFiltered) {
-                    filterBooks();
-                } else if (isSorted) {
-                    sortBooks();
-                };
-
-                displayLibrary();
-
-            } else {
-                let text = document.createElement('p');
-                text.classList.add('btn-text');
-                toggleReadValue(node);
-                updateStorage();
-                if (child.textContent === 'book_2') {
-                    child.textContent = 'auto_stories';
-                    text.textContent = 'Not Read';
-                } else {
-                    child.textContent = 'book_2';
-                    text.textContent = 'Read';
-                };
-                node.appendChild(text);
-                setTimeout(() => text.remove(), 2300);
-            };
-        })
-    })
-}
-
-
-search.addEventListener('keyup', () => {
-    searchLib = myLibrary.filter(book => {
-        return book.title.startsWith(search.value);
-    });
-
-    clearDisplay();
-
-    isFiltered = false;
-    filter.value = 'placeholder';
-    isSorted = false;
-    sort.value = 'placeholder';
-
-    while (filterContainer.firstChild) {
-        filterContainer.removeChild(filterContainer.firstChild);
-    };
-
-    searchLib.forEach(book => displayLibrary(book));
-});
-
-function cancelBtnListener(node) {
-    node.addEventListener('click', () => {
-        node.remove();
-        if (node.classList.contains('filter')) {
-            filter.value = 'placeholder';
-            isFiltered = false;
-            clearDisplay();
-            displayLibrary();
-        } else {
-            sort.value = 'placeholder';
-            isSorted = false;
-            if (isFiltered) {
-                filterBooks();
-            };
-            clearDisplay();
-            displayLibrary();
-        };
-    });
-};
-
-
-
-let filteredLib = [];
-let sortedLib = [];
-let isFiltered = false;
-let isSorted = false;
-
-
-filter.addEventListener('change', (e) => {
-    const select = e.target;
-    const value = select.value;
-    const text = select.options[select.selectedIndex].text;
-
-    addBubbleIcon('filter');
-
-    filterBooks();
-
-    clearDisplay();
-    displayLibrary();
-});
-
-function filterBooks() {
-    const value = filter.value;
-    isFiltered = true;
-    let books = [];
-    (isSorted) ? books = sortedLib : books = myLibrary;
-
-    if (value === 'read') {
-        filteredLib = books.filter(book => book.read);
-    } else if (value === 'not-read') {
-        filteredLib = books.filter(book => !book.read);
-    } else {
-        filteredLib = books.filter(book => book.genre === value);
-    };
-};
-
-function addBubbleIcon(type) {
-
-    let selectionText = '';
-
-    if (type === 'filter') {
-        selectionText = filter.options[filter.selectedIndex].text;
-    } else if (type === 'sort') {
-        selectionText = sort.options[sort.selectedIndex].text;
-    }
-
-    const bubble = document.createElement('button');
-    bubble.classList.add('filter-button', `${type}`);
-
-    const btnText = document.createElement('span');
-    btnText.textContent = selectionText;
-
-    const icon = document.createElement('span');
-    icon.classList.add('material-symbols-outlined');
-    icon.textContent = 'close';
-
-    bubble.append(btnText, icon);
-    cancelBtnListener(bubble);
-
-    //checks for pre-existing filter/sort icons, replaces if found with new selection
-    const elems = Array.from(filterContainer.childNodes);
-    let matchFound = false;
-    elems.forEach(elem => {
-        if (elem.classList.contains(type)) {
-            filterContainer.replaceChild(bubble, elem);
-            matchFound = true;
-        };
-    });
-    // if not found adds as new icon
-    if (!matchFound) filterContainer.appendChild(bubble);
-};
-
-
-function sortBooks() {
-    const value = sort.value;
-    const text = sort.options[sort.selectedIndex].text;
-    sortedLib = myLibrary.slice();
-    isSorted = true;
-
-    sortedLib.sort((a, b) => {
-        const bookA = a[value];
-        const bookB = b[value];
-
-        if (text === 'Ascending') {
-            if (bookA < bookB) {
-                return -1;
-            } else if (bookA > bookB) {
-                return 1;
-            } else return 0;
-        } else {
-            if (bookA > bookB) {
-                return -1;
-            } else if (bookA < bookB) {
-                return 1;
-            } else return 0;
-        };
-    });
-    console.log(`sorted array: ${sortedLib}`);
-};
-
-
-sort.addEventListener('change', () => {
-    //const text = sort.options[sort.selectedIndex].text;
-    addBubbleIcon('sort');
-    sortBooks(); //sorts entire library every time
-
-    if (isFiltered) {
-        filterBooks();
-    }
-    clearDisplay();
-    displayLibrary();
-});
-
-
-deleteLibrary.addEventListener('click', () => {
-    localStorage.clear();
-    myLibrary.length = 0;
-    if (bookContainer.firstChild) {
-        clearDisplay();
-    } else {
-        deleteLibrary.style.backgroundColor = 'rgb(255, 98, 98)';
-        setTimeout(() => {
-            deleteLibrary.style.backgroundColor = '';
-        }, 500);
-    };
-});
-
-function validateForm(form) {
-    const inputs = Array.from(form.elements);
-
-    for (let i = 0; i < 4; i++) {
-        const value = inputs[i].value;
-        if (!value) {
-            return false;
-        };
-    };
-    return true;
-};
-
-function errorMessage(e) {
-    const button = e.target;
-    const errorMessage = document.createElement('p');
-    errorMessage.classList.add('error-msg');
-    errorMessage.textContent = 'Please fill out all fields.';
-
-    button.insertAdjacentElement('beforebegin', errorMessage);
-    setTimeout(() => errorMessage.remove(), 5000);
-};
-
-
-submitForm.addEventListener('click', (e) => {
-
-
-    e.preventDefault();
-    const form = document.querySelector('#book-form');
-    if (!validateForm(form)) return errorMessage(e);
-    const formData = new FormData(form);
-
-    const bookValues = Array.from(formData.values());
-    const book = new Book(...bookValues);
-    console.log(`book = ${book}`);
-
-    storeBook(book);
-    displayLibrary(book);
-    form.reset();
-})
-
-toggle.addEventListener('click', () => {
-    if (checkbox.checked) {
-        checkbox.checked = false;
-        checkbox.style.backgroundColor = '';
-        toggle.style.left = '1px';
-        not.style.left = '0px';
-        not.style.opacity = 1;
-        readText.style.right = '0px';
-    } else {
-        checkbox.checked = true;
-        checkbox.style.backgroundColor = 'rgb(127, 241, 133)';
-        toggle.style.left = '20px';
-        not.style.left = '35px';
-        not.style.opacity = 0;
-        readText.style.right = '30px';
-    };
-    console.log(checkbox.checked);
-});
-
-inputs.forEach((input) => {
-    input.addEventListener('focus', () => {
-        const label = document.querySelector(`.${input.id}`);
-        label.style.bottom = '20px';
-    })
-
-    input.addEventListener('blur', () => {
-        const label = document.querySelector(`.${input.id}`);
-        if (!input.value) return label.style.bottom = '0px';
-    })
-})
-
 
 function Book(title, author, genre, pages, read) {
     this.title = title;
@@ -378,21 +48,18 @@ Book.prototype.toggleRead = function () {
 };
 
 
+let myLibrary = [];
 
-function storeBook(book) {
-    myLibrary.push(book); //adds book to library array
-    updateStorage();
-};
-
-//pushes any stored books straight onto library array
+//checks for stored books and displays on load
 function checkStorage() {
     if (localStorage.length) {
         const myLibraryString = localStorage.getItem('myLibrary');
         myLibrary = JSON.parse(myLibraryString);
+        console.table(myLibrary);
+
+        displayLibrary();
     };
 };
-
-
 
 function displayLibrary(book) {
     if (book) {
@@ -406,23 +73,14 @@ function displayLibrary(book) {
         } else library = myLibrary;
 
         for (let i = 0; i < library.length; i++) {
-            addToLibrary(library[i])
-        }
-        console.log('books generated!'); //test
+            addToLibrary(library[i]);
+            Object.setPrototypeOf(library[i], Book.prototype);
+        };
     };
 };
 
-function clearDisplay() {
-    bookBtnArr.length = 0;
-    columnCount = 0;
-    while (bookContainer.firstChild) {
-        bookContainer.removeChild(bookContainer.firstChild);
-    };
-    console.log('display cleared!'); //test
-};
 
 let columnCount = 0;
-const bookBtnArr = [];
 
 function addToLibrary(book) {
 
@@ -433,6 +91,7 @@ function addToLibrary(book) {
         columnCount = 0;
     }
     columnCount++;
+
 
     const bookButtons = document.createElement('div');
     bookButtons.classList.add('book-buttons-container');
@@ -446,7 +105,6 @@ function addToLibrary(book) {
     (book.read) ? readBtn.textContent = 'book_2' : readBtn.textContent = 'auto_stories';
 
     bookButtons.append(deleteBtn, readBtn);
-    bookBtnArr.push(bookButtons);
     bookButtonListener(bookButtons);
 
     bookContainer.appendChild(bookButtons);
@@ -458,6 +116,7 @@ function addToLibrary(book) {
     title.classList.add('title');
     title.textContent = book.title;
 
+    //gold lines around author name
     const dividingLine = document.createElement('div');
     dividingLine.classList.add('line');
 
@@ -477,12 +136,13 @@ function addToLibrary(book) {
 
     bookContainer.appendChild(bookCard);
 
-    leftPosition = -3;
-    topPosition = -2;
-
     let pageStack = document.createElement('div');
+
+    //reduces total number of pages to smaller size
     const numOfPages = Math.ceil((book.pages / 10) / 4.2);
 
+    leftPosition = -3;
+    topPosition = -2;
 
     for (let z = 1; z <= numOfPages; z++) {
         const bookPage = document.createElement('div');
@@ -496,21 +156,350 @@ function addToLibrary(book) {
         topPosition += 1;
     }
 
-
     const backCover = document.createElement('div');
     backCover.style.position = 'absolute';
-    backCover.classList.add('book-cover');
+    backCover.classList.add('back-cover');
     backCover.style.left = `${leftPosition + 6}px`;
     backCover.style.top = `${topPosition + 3}px`;
-    backCover.style.zIndex = -numOfPages - 1; //must be one less than page count
+    backCover.style.zIndex = -numOfPages - 1;
     pageStack.appendChild(backCover);
 
     bookCard.appendChild(pageStack);
 };
 
 
-checkStorage();
-displayLibrary();
-console.log(myLibrary);
-//addToLibrary();
+submitButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const form = document.querySelector('#book-form');
+    if (validateForm(form)) {
+        const formData = new FormData(form);
 
+        const bookValues = Array.from(formData.values());
+        const book = new Book(...bookValues);
+
+        storeBook(book);
+        displayLibrary(book);
+        form.reset();
+    } else errorMessage();
+});
+
+function validateForm(form) {
+    const inputs = Array.from(form.elements);
+
+    for (let i = 0; i < 4; i++) {
+        const value = inputs[i].value;
+        if (!value) {
+            return false;
+        };
+    };
+    return true;
+};
+
+function errorMessage() {
+    const errorMessage = document.createElement('p');
+    errorMessage.classList.add('error-msg');
+    errorMessage.textContent = 'Please fill out all fields.';
+
+    submitButton.insertAdjacentElement('beforebegin', errorMessage);
+    setTimeout(() => errorMessage.remove(), 5000);
+
+    return false;
+};
+
+function storeBook(book) {
+    console.log(book);
+    myLibrary.push(book); 
+    updateStorage();
+};
+
+//overwrites stored library array
+function updateStorage() {
+    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+};
+
+
+function bookButtonListener(node) {
+    node.childNodes.forEach(child => {
+        child.addEventListener('click', () => {
+            if (child === node.firstChild) {
+                deleteFromLibrary(node);
+                updateStorage();
+                clearDisplay();
+
+                if (isFiltered && isSorted) {
+                    sortBooks();
+                    filterBooks();
+                } else if (isFiltered) {
+                    filterBooks();
+                } else if (isSorted) {
+                    sortBooks();
+                };
+
+                displayLibrary();
+
+            } else {
+                let text = document.createElement('p');
+                text.classList.add('btn-text');
+                toggleReadValue(node);
+                updateStorage();
+                if (child.textContent === 'book_2') {
+                    child.textContent = 'auto_stories';
+                    text.textContent = 'Not Read';
+                } else {
+                    child.textContent = 'book_2';
+                    text.textContent = 'Read';
+                };
+                node.appendChild(text);
+                setTimeout(() => text.remove(), 2300);
+            };
+        });
+    });
+};
+
+
+
+function deleteFromLibrary(node) {
+    myLibrary.splice(findBookIndex(node), 1);
+};
+
+function toggleReadValue(node) {
+    bookObj = myLibrary[findBookIndex(node)];
+    bookObj.toggleRead();
+};
+
+function findBookIndex(node) {
+    const book = node.nextElementSibling;
+    const bookInfo = book.childNodes;
+    let title;
+    let author;
+    const matching = (elem) => {
+        if (elem.title === title) {
+            return elem.author === author;
+        };
+    };
+
+    for (let i = 0; i < 3; i++) {
+        if (bookInfo[i].classList.contains('title')) {
+            title = bookInfo[i].textContent;
+        } else if (bookInfo[i].classList.contains('author')) {
+            author = bookInfo[i].textContent;
+        };
+    };
+
+    const index = myLibrary.findIndex(matching);
+console.log(index);
+    return index;
+};
+
+function clearDisplay() {
+    columnCount = 0;
+    while (bookContainer.firstChild) {
+        bookContainer.removeChild(bookContainer.firstChild);
+    };
+};
+
+
+let searchLib = [];
+const search = document.querySelector('#search');
+
+search.addEventListener('keyup', () => {
+    //makes search result case insensitive 
+    const userEntry = search.value.toLowerCase();
+    searchLib = myLibrary.filter(book => {
+        const lowerCaseTitle = book.title.toLowerCase(); 
+        return lowerCaseTitle.startsWith(userEntry);
+    });
+
+    clearDisplay();
+
+    isFiltered = false;
+    filter.value = 'placeholder';
+    isSorted = false;
+    sort.value = 'placeholder';
+
+    while (filterContainer.firstChild) {
+        filterContainer.removeChild(filterContainer.firstChild);
+    };
+
+    searchLib.forEach(book => displayLibrary(book));
+});
+
+let filteredLib = [];
+let sortedLib = [];
+let isFiltered = false;
+let isSorted = false;
+
+filter.addEventListener('change', (e) => {
+    const select = e.target;
+    const value = select.value;
+    const text = select.options[select.selectedIndex].text;
+
+    addBubbleIcon('filter');
+
+    filterBooks();
+
+    clearDisplay();
+    displayLibrary();
+});
+
+function filterBooks() {
+    const value = filter.value;
+    isFiltered = true;
+    let books = [];
+    (isSorted) ? books = sortedLib : books = myLibrary;
+
+    if (value === 'read') {
+        filteredLib = books.filter(book => book.read);
+    } else if (value === 'not-read') {
+        filteredLib = books.filter(book => !book.read);
+    } else {
+        filteredLib = books.filter(book => book.genre === value);
+    };
+};
+
+sort.addEventListener('change', () => {
+    addBubbleIcon('sort');
+    sortBooks(); 
+
+    if (isFiltered) {
+        filterBooks();
+    };
+    clearDisplay();
+    displayLibrary();
+});
+
+function sortBooks() {
+    const value = sort.value;
+    const text = sort.options[sort.selectedIndex].text;
+    sortedLib = myLibrary.slice();
+    isSorted = true;
+
+    sortedLib.sort((a, b) => {
+        const bookA = a[value];
+        const bookB = b[value];
+
+        if (text === 'Ascending') {
+            if (bookA < bookB) {
+                return -1;
+            } else if (bookA > bookB) {
+                return 1;
+            } else return 0;
+        } else {
+            if (bookA > bookB) {
+                return -1;
+            } else if (bookA < bookB) {
+                return 1;
+            } else return 0;
+        };
+    });
+};
+
+function addBubbleIcon(type) {
+    let selectionText = '';
+
+    if (type === 'filter') {
+        selectionText = filter.options[filter.selectedIndex].text;
+    } else if (type === 'sort') {
+        selectionText = sort.options[sort.selectedIndex].text;
+    }
+
+    const bubble = document.createElement('button');
+    bubble.classList.add('filter-button', `${type}`);
+
+    const btnText = document.createElement('span');
+    btnText.textContent = selectionText;
+
+    const icon = document.createElement('span');
+    icon.classList.add('material-symbols-outlined');
+    icon.textContent = 'close';
+
+    bubble.append(btnText, icon);
+    cancelBtnListener(bubble);
+
+    //checks for pre-existing filter/sort icons, if found, replaces with new selection
+    const elems = Array.from(filterContainer.childNodes);
+    let matchFound = false;
+    elems.forEach(elem => {
+        if (elem.classList.contains(type)) {
+            filterContainer.replaceChild(bubble, elem);
+            matchFound = true;
+        };
+    });
+    // if not found adds as new icon
+    if (!matchFound) filterContainer.appendChild(bubble);
+};
+
+
+function cancelBtnListener(node) {
+    node.addEventListener('click', () => {
+        node.remove();
+        if (node.classList.contains('filter')) {
+            filter.value = 'placeholder';
+            isFiltered = false;
+            clearDisplay();
+            displayLibrary();
+        } else {
+            sort.value = 'placeholder';
+            isSorted = false;
+            if (isFiltered) {
+                filterBooks();
+            };
+            clearDisplay();
+            displayLibrary();
+        };
+    });
+};
+
+const deleteLibrary = document.querySelector('.delete');
+
+deleteLibrary.addEventListener('click', () => {
+    localStorage.clear();
+    myLibrary.length = 0;
+    if (bookContainer.firstChild) {
+        clearDisplay();
+    } else {
+        deleteLibrary.style.backgroundColor = 'rgb(255, 98, 98)';
+        setTimeout(() => {
+            deleteLibrary.style.backgroundColor = '';
+        }, 500);
+    };
+});
+
+const checkbox = document.querySelector('.checkbox');
+const toggle = document.querySelector('#circle');
+const not = document.querySelector('.not');
+const readText = document.querySelector('.read-text');
+
+//animates read/not-read toggle checkbox
+toggle.addEventListener('click', () => {
+    if (checkbox.checked) {
+        checkbox.checked = false;
+        checkbox.style.backgroundColor = '';
+        toggle.style.left = '1px';
+        not.style.left = '0px';
+        not.style.opacity = 1;
+        readText.style.right = '0px';
+    } else {
+        checkbox.checked = true;
+        checkbox.style.backgroundColor = 'rgb(127, 241, 133)';
+        toggle.style.left = '20px';
+        not.style.left = '35px';
+        not.style.opacity = 0;
+        readText.style.right = '30px';
+    };
+});
+
+//animates input labels
+inputs.forEach((input) => {
+    input.addEventListener('focus', () => {
+        const label = document.querySelector(`.${input.id}`);
+        label.style.bottom = '20px';
+    })
+
+    input.addEventListener('blur', () => {
+        const label = document.querySelector(`.${input.id}`);
+        if (!input.value) return label.style.bottom = '0px';
+    });
+});
+
+checkStorage();
